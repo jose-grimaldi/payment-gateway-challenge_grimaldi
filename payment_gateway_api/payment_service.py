@@ -13,30 +13,11 @@ class PaymentService:
         self.bank_service = bank_service
         self.payment_repository = payment_repository
 
-    @staticmethod
-    def create_payment_request(payload: dict) -> PaymentRequest:
-        """
-        Function allowing to take a payload dict and transform it to a PaymentRequest object
-        If there are missing fields the object will not be created and an exception will be raised
-        """
-
-        payment = PaymentRequest(
-            card_number=payload["card_number"],
-            expiry_month=payload["expiry_month"],
-            expiry_year=payload["expiry_year"],
-            currency=payload["currency"],
-            amount=payload["amount"],
-            cvv=payload["cvv"]
-        )
-
-        return payment
-
-    def process_payment(self, payload: dict) -> PaymentResponse:
+    def process_payment(self, payment: PaymentRequest) -> PaymentResponse:
         """
         Main function allowing to create a PaymentRequest from a payload and then process the payment calling the
         BankService. Create a PaymentResponse with the status based on the response of the BankService
         """
-        payment = self.create_payment_request(payload)
 
         if not PaymentValidator().validate_payment(payment):
             raise InvalidPaymentParameterError()
