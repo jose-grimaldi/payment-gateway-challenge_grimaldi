@@ -3,6 +3,7 @@ from uuid import uuid4
 from payment_gateway_api.bank_service import BankService
 from payment_gateway_api.exceptions import InvalidPaymentParameterError, PaymentNotFoundError
 from payment_gateway_api.models import PaymentResponse, PaymentRequest
+from payment_gateway_api.models import PaymentStatus
 from payment_gateway_api.payment_repository import PaymentRepository
 from payment_gateway_api.payment_validator import PaymentValidator
 
@@ -24,7 +25,7 @@ class PaymentService:
 
         bank_response = self.bank_service.process_payment(payment)
 
-        status = "Authorized" if bank_response["authorized"] else "Declined"
+        status = PaymentStatus.AUTHORIZED.value if bank_response["authorized"] else PaymentStatus.DECLINED.value
 
         payment_response = PaymentResponse(
             id=str(uuid4()),

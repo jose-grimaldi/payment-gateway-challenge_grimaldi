@@ -1,4 +1,5 @@
 from dataclasses import dataclass, asdict
+from enum import Enum
 
 from payment_gateway_api.exceptions import MissingPaymentRequestParameterError
 
@@ -49,10 +50,15 @@ class PaymentRequest:
         return asdict(self)
 
 
+class PaymentStatus(Enum):
+    AUTHORIZED = "Authorized"
+    DECLINED = "Declined"
+
+
 @dataclass(frozen=True)
 class PaymentResponse:
     id: str
-    status: str
+    status: PaymentStatus
     last_four_card_digits: str
     expiry_month: str
     expiry_year: str

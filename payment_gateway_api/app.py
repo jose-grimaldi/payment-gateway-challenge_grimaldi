@@ -3,6 +3,7 @@ from dataclasses import asdict
 from fastapi import FastAPI, HTTPException, Request
 
 from payment_gateway_api.bank_service import BankService
+from payment_gateway_api.config import REQUIRED_FIELDS_PAYLOAD
 from payment_gateway_api.exceptions import (PaymentNotFoundError, MissingPaymentRequestParameterError,
                                             InvalidPaymentParameterError)
 from payment_gateway_api.models import PaymentRequest
@@ -36,7 +37,11 @@ async def create_payment(request: Request):
         raise HTTPException(status_code=400, detail="Invalid JSON request")
 
     if not isinstance(payload, dict):
-        raise HTTPException( status_code=400, detail="Request body must be a JSON object")
+        raise HTTPException(status_code=400, detail="Request body must be a JSON object")
+
+    unexpected_fields = set(payload.keys()) - REQUIRED_FIELDS_PAYLOAD
+    if unexpected_fields:
+        raise HTTPException(status_code=400, detail=f"Unexpected fields: {', '.join(sorted(unexpected_fields))}")
 
     try:
         payment = PaymentRequest(**payload)

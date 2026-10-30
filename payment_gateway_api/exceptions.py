@@ -9,7 +9,7 @@ class MissingPaymentRequestParameterError(Exception):
 class InvalidPaymentParameterError(Exception):
 
     def __init__(self):
-        message = f"Payment information is invalid"
+        message = f"Payment information is invalid, payment Rejected"
         super().__init__(message)
 
 
