@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from payment_gateway_api.bank_service import BankService
-from payment_gateway_api.exceptions import InvalidPaymentParameterError
+from payment_gateway_api.exceptions import InvalidPaymentParameterError, PaymentNotFoundError
 from payment_gateway_api.models import PaymentResponse, PaymentRequest
 from payment_gateway_api.payment_repository import PaymentRepository
 from payment_gateway_api.payment_validator import PaymentValidator
@@ -31,7 +31,11 @@ class PaymentService:
 
         return payment
 
-    def process_payment(self, payload: dict):
+    def process_payment(self, payload: dict) -> PaymentResponse:
+        """
+        Main function allowing to create a PaymentRequest from a payload and then process the payment calling the
+        BankService. Create a PaymentResponse with the status based on the response of the BankService
+        """
         payment = self.create_payment_request(payload)
 
         if not PaymentValidator().validate_payment(payment):
@@ -54,3 +58,12 @@ class PaymentService:
         self.payment_repository.save(payment_response)
 
         return payment_response
+
+    def get_payment(self, payment_id: str) -> PaymentResponse:
+
+        payment = self.payment_repository.get_by_id(payment_id)
+
+        if payment is None:
+            raise PaymentNotFoundError(payment_id)
+
+        return payment

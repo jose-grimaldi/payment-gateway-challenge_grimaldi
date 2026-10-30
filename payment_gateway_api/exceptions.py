@@ -11,3 +11,11 @@ class InvalidPaymentParameterError(Exception):
     def __init__(self):
         message = f"Payment information is invalid"
         super().__init__(message)
+
+
+class PaymentNotFoundError(Exception):
+
+    def __init__(self, payment_id: str):
+        self.payment_id = payment_id
+
+        super().__init__(f"Payment with ID '{payment_id}' was not found")

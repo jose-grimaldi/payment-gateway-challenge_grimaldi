@@ -1,15 +1,70 @@
 from datetime import datetime
+from unittest.mock import MagicMock
 
 import pytest
 
+from payment_gateway_api.bank_service import BankService
 from payment_gateway_api.models import PaymentRequest
+from payment_gateway_api.payment_repository import PaymentRepository
+from payment_gateway_api.payment_service import PaymentService
 
 
 @pytest.fixture
-def valid_payment_payload():
+def payment_repository():
+    return MagicMock(spec=PaymentRepository)
+
+
+@pytest.fixture
+def bank_service():
+    return MagicMock(spec=BankService)
+
+
+@pytest.fixture
+def payment_service(bank_service, payment_repository):
+    return PaymentService(bank_service, payment_repository)
+
+
+@pytest.fixture
+def valid_payment_simulator_payload():
     return {
         "card_number": "0123456789123451",
         "expiry_date": "04/2027",
+        "currency": "USD",
+        "amount": 100,
+        "cvv": "123"
+    }
+
+
+@pytest.fixture
+def authorized_payment_payload():
+    return {
+        "card_number": "0123456789123451",
+        "expiry_month": "04",
+        "expiry_year": "2027",
+        "currency": "USD",
+        "amount": 100,
+        "cvv": "123"
+    }
+
+
+@pytest.fixture
+def unauthorized_payment_payload():
+    return {
+        "card_number": "0123456789123452",
+        "expiry_month": "04",
+        "expiry_year": "2027",
+        "currency": "USD",
+        "amount": 100,
+        "cvv": "123"
+    }
+
+
+@pytest.fixture
+def invalid_payment_payload():
+    return {
+        "card_number": "01",
+        "expiry_month": "04",
+        "expiry_year": "2027",
         "currency": "USD",
         "amount": 100,
         "cvv": "123"
