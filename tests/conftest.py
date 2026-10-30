@@ -79,8 +79,7 @@ def invalid_payment_payload():
 def valid_payment_request():
     return PaymentRequest(
         card_number="0123456789123451",
-        expiry_month="04",
-        expiry_year="2027",
+        expiry_date="04/2027",
         currency="USD",
         amount=100,
         cvv="123"
@@ -91,8 +90,7 @@ def valid_payment_request():
 def invalid_payment_request():
     return PaymentRequest(
         card_number="0123456789123451",
-        expiry_month="04",
-        expiry_year="1900",
+        expiry_date="04/1900",
         currency="USD",
         amount=100,
         cvv="123"
@@ -103,8 +101,7 @@ def invalid_payment_request():
 def declined_payment_request():
     return PaymentRequest(
         card_number="0123456789123452",
-        expiry_month="04",
-        expiry_year="2027",
+        expiry_date="04/2027",
         currency="USD",
         amount=100,
         cvv="123"
@@ -115,8 +112,7 @@ def declined_payment_request():
 def unavailable_payment_request():
     return PaymentRequest(
         card_number="0123456789123450",
-        expiry_month="04",
-        expiry_year="2027",
+        expiry_date="04/2027",
         currency="USD",
         amount=100,
         cvv="123"

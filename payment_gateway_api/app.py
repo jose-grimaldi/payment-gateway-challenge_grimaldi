@@ -32,19 +32,20 @@ async def create_payment(request: Request):
     """
     try:
         payload = await request.json()
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid JSON request")
 
-        payload.update({"expiry_month": payload['expiry_date'].split('/')[0],
-                        "expiry_year": payload['expiry_date'].split('/')[1]})
-        payload.pop('expiry_date')
+    if not isinstance(payload, dict):
+        raise HTTPException( status_code=400, detail="Request body must be a JSON object")
 
+    try:
         payment = PaymentRequest(**payload)
-
-        response = payment_service.process_payment(payment)
-
-        return asdict(response)
-
     except (TypeError, MissingPaymentRequestParameterError) as error:
         raise HTTPException(status_code=400, detail=str(error))
+
+    try:
+        response = payment_service.process_payment(payment)
+        return asdict(response)
 
     except InvalidPaymentParameterError as error:
         raise HTTPException(status_code=400, detail=str(error))
