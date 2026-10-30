@@ -1,19 +1,13 @@
 """
-Class allowing to check all validation criterion for a request
+Class allowing to check all validation criterion for a payment request
 """
 from datetime import datetime
 
-from payment_gateway_api.config import BANK_SIMULATOR_REQUIRED_FIELDS, CURRENCIES
+from payment_gateway_api.config import CURRENCIES
+from payment_gateway_api.models import PaymentRequest
 
 
 class PaymentValidator:
-
-    @staticmethod
-    def validate_required_fields(payload: dict) -> bool:
-        """
-        Function allowing to check if all required fields are present
-        """
-        return all(field in payload for field in BANK_SIMULATOR_REQUIRED_FIELDS)
 
     @staticmethod
     def validate_card_number(card_number: str) -> bool:
@@ -79,20 +73,17 @@ class PaymentValidator:
 
         return cvv.isdigit() and (3 <= len(cvv) <= 4)
 
-    def validate_payment(self, payload: dict) -> bool:
+    def validate_payment(self, payload: PaymentRequest) -> bool:
         """
         Main function checking that the payload is valid
         """
-        if not isinstance(payload, dict):
-            return False
-
-        if not self.validate_required_fields(payload):
+        if not isinstance(payload, PaymentRequest):
             return False
 
         return (
-            self.validate_card_number(payload["card_number"])
-            and self.validate_expiry_date(payload["expiry_date"])
-            and self.validate_currency(payload["currency"])
-            and self.validate_amount(payload["amount"])
-            and self.validate_cvv(payload["cvv"])
+            self.validate_card_number(payload.card_number)
+            and self.validate_expiry_date(payload.expiry_date)
+            and self.validate_currency(payload.currency)
+            and self.validate_amount(payload.amount)
+            and self.validate_cvv(payload.cvv)
         )
