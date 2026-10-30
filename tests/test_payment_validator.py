@@ -22,24 +22,25 @@ def test_invalid_card_numbers(card_number):
     assert PaymentValidator.validate_card_number(card_number) is False
 
 
-@pytest.mark.parametrize("expiry_date", [
-    "10/2026",
-    "11/2026",
-])
-def test_valid_expiry_dates(expiry_date, frozen_datetime):
-    assert PaymentValidator.validate_expiry_date(expiry_date) is True
+@pytest.mark.parametrize("expiry_month, expiry_year",
+                         [
+                             ("10", "2026"),
+                             ("11", "2026"),
+                         ])
+def test_valid_expiry_dates(expiry_month, expiry_year, frozen_datetime):
+    assert PaymentValidator.validate_expiry_date(expiry_month, expiry_year) is True
 
 
-@pytest.mark.parametrize("expiry_date", [
-    "09/2026",  # past date
-    "13/2027",  # invalid month
-    "00/2027",  # invalid month
-    "4/2027",  # invalid month format
-    "invalid"  # invalid string
-
-])
-def test_invalid_expiry_dates(expiry_date, frozen_datetime):
-    assert PaymentValidator.validate_expiry_date(expiry_date) is False
+@pytest.mark.parametrize("expiry_month, expiry_year",
+                         [
+                             ("09", "2026"),  # past date
+                             ("13", "2027"),  # invalid month
+                             ("00", "2027"),  # invalid month
+                             ("4", "2027"),  # invalid month format
+                             ("invalid", "")  # invalid string
+                         ])
+def test_invalid_expiry_dates(expiry_month, expiry_year, frozen_datetime):
+    assert PaymentValidator.validate_expiry_date(expiry_month, expiry_year) is False
 
 
 @pytest.mark.parametrize("currency", CURRENCIES)

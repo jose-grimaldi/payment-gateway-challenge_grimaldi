@@ -5,26 +5,26 @@ from payment_gateway_api.exceptions import MissingPaymentRequestParameterError
 
 @dataclass(frozen=True)
 class PaymentRequest:
-    id: str
     card_number: str
-    expiry_date: str
+    expiry_month: str
+    expiry_year: str
     currency: str
     amount: int
     cvv: str
 
     def __init__(
         self,
-        id=None,
         card_number=None,
-        expiry_date=None,
+        expiry_month=None,
+        expiry_year=None,
         currency=None,
         amount=None,
         cvv=None
     ):
         parameters = {
-            "id": id,
             "card_number": card_number,
-            "expiry_date": expiry_date,
+            "expiry_month": expiry_month,
+            "expiry_year": expiry_year,
             "currency": currency,
             "amount": amount,
             "cvv": cvv
@@ -42,4 +42,17 @@ class PaymentRequest:
             object.__setattr__(self, name, value)
 
     def to_dict(self):
-        return asdict(self)
+        d = asdict(self)
+        d.update({"expiry_date": self.expiry_month + '/' + self.expiry_year})
+        return d
+
+
+@dataclass(frozen=True)
+class PaymentResponse:
+    id: str
+    status: str
+    last_four_card_digits: str
+    expiry_month: str
+    expiry_year: str
+    currency: str
+    amount: int

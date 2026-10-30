@@ -20,18 +20,12 @@ class PaymentValidator:
         return card_number.isdigit() and (14 <= len(card_number) <= 19)
 
     @staticmethod
-    def validate_expiry_date(expiry_date: str) -> bool:
+    def validate_expiry_date(expiry_month: str, expiry_year: str) -> bool:
         """
         Function allowing to check if an expiry date is in the future and if the month and year format are correct
         """
-        if not isinstance(expiry_date, str):
+        if not isinstance(expiry_month, str) or not isinstance(expiry_year, str):
             return False
-
-        parts = expiry_date.split("/")
-        if len(parts) != 2:
-            return False
-
-        expiry_month, expiry_year = parts
 
         if len(expiry_month) != 2 or len(expiry_year) != 4:
             return False
@@ -73,17 +67,17 @@ class PaymentValidator:
 
         return cvv.isdigit() and (3 <= len(cvv) <= 4)
 
-    def validate_payment(self, payload: PaymentRequest) -> bool:
+    def validate_payment(self, payment: PaymentRequest) -> bool:
         """
         Main function checking that the payload is valid
         """
-        if not isinstance(payload, PaymentRequest):
+        if not isinstance(payment, PaymentRequest):
             return False
 
         return (
-            self.validate_card_number(payload.card_number)
-            and self.validate_expiry_date(payload.expiry_date)
-            and self.validate_currency(payload.currency)
-            and self.validate_amount(payload.amount)
-            and self.validate_cvv(payload.cvv)
+            self.validate_card_number(payment.card_number)
+            and self.validate_expiry_date(payment.expiry_month, payment.expiry_year)
+            and self.validate_currency(payment.currency)
+            and self.validate_amount(payment.amount)
+            and self.validate_cvv(payment.cvv)
         )

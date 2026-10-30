@@ -19,9 +19,9 @@ def valid_payment_payload():
 @pytest.fixture
 def valid_payment_request():
     return PaymentRequest(
-        id="pr1",
         card_number="0123456789123451",
-        expiry_date="04/2027",
+        expiry_month="04",
+        expiry_year="2027",
         currency="USD",
         amount=100,
         cvv="123"
@@ -31,9 +31,9 @@ def valid_payment_request():
 @pytest.fixture
 def invalid_payment_request():
     return PaymentRequest(
-        id="pr1",
         card_number="0123456789123451",
-        expiry_date="04/1900",
+        expiry_month="04",
+        expiry_year="1900",
         currency="USD",
         amount=100,
         cvv="123"
@@ -43,9 +43,9 @@ def invalid_payment_request():
 @pytest.fixture
 def declined_payment_request():
     return PaymentRequest(
-        id="pr1",
         card_number="0123456789123452",
-        expiry_date="04/2027",
+        expiry_month="04",
+        expiry_year="2027",
         currency="USD",
         amount=100,
         cvv="123"
@@ -55,9 +55,9 @@ def declined_payment_request():
 @pytest.fixture
 def unavailable_payment_request():
     return PaymentRequest(
-        id="pr1",
         card_number="0123456789123450",
-        expiry_date="04/2027",
+        expiry_month="04",
+        expiry_year="2027",
         currency="USD",
         amount=100,
         cvv="123"
