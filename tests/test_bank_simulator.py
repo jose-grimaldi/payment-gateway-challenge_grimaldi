@@ -1,0 +1,101 @@
+import json
+
+import requests
+
+from conftest import BANK_SIMULATOR_URL_BASE
+
+"""
+Module allowing to test the different responses from the Bank Service Simulator
+"""
+
+
+def test_bank_authorizes_payment():
+    """
+    If card number ends on an odd number, then the simulator returns an 200 OK, authorized True
+    """
+    payload = {
+        "card_number": "0123456789123451",
+        "expiry_date": "04/1997",
+        "currency": "GBP",
+        "amount": 100,
+        "cvv": "123"
+    }
+
+    response = requests.post(
+        f"{BANK_SIMULATOR_URL_BASE}/payments",
+        json=payload,
+        timeout=5
+    )
+
+    response_dict = json.loads(response.text)
+
+    assert response.status_code == 200
+    assert response_dict['authorized'] is True
+
+
+def test_bank_declines_payment():
+    """
+    If card number ends on an even number, then the simulator returns an 200 OK, authorized False
+    """
+    payload = {
+        "card_number": "0123456789123452",
+        "expiry_date": "04/2025",
+        "currency": "GBP",
+        "amount": 100,
+        "cvv": "123"
+    }
+
+    response = requests.post(
+        f"{BANK_SIMULATOR_URL_BASE}/payments",
+        json=payload,
+        timeout=5
+    )
+
+    response_dict = json.loads(response.text)
+
+    assert response.status_code == 200
+    assert response_dict['authorized'] is False
+
+
+def test_bank_returns_service_unavailable():
+    """
+    If card number ends on a zero, then the simulator returns an 503 Service Unavailable
+    """
+    payload = {
+        "card_number": "0123456789123450",
+        "expiry_date": "04/2025",
+        "currency": "GBP",
+        "amount": 100,
+        "cvv": "123"
+    }
+
+    response = requests.post(
+        f"{BANK_SIMULATOR_URL_BASE}/payments",
+        json=payload,
+        timeout=5
+    )
+
+    assert response.status_code == 503
+
+
+def test_bank_rejects_invalid_request():
+    """
+    If the payload is missing a required field, then the simulator returns an 400 Bad Request with error message
+    """
+    payload = {
+        "expiry_date": "04/2025",
+        "currency": "GBP",
+        "amount": 100,
+        "cvv": "123"
+    }
+
+    response = requests.post(
+        f"{BANK_SIMULATOR_URL_BASE}/payments",
+        json=payload,
+        timeout=5
+    )
+
+    response_dict = json.loads(response.text)
+
+    assert response.status_code == 400
+    assert response_dict['error_message'] == 'Not all required properties were sent in the request'
