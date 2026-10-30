@@ -1,8 +1,10 @@
 import json
 
+import pytest
 import requests
 
-from conftest import BANK_SIMULATOR_URL_BASE
+from payment_gateway_api.config import (BANK_SIMULATOR_REQUIRED_FIELDS,
+                                        BANK_SIMULATOR_URL_BASE)
 
 """
 Module allowing to test the different responses from the Bank Service Simulator
@@ -15,7 +17,7 @@ def test_bank_authorizes_payment():
     """
     payload = {
         "card_number": "0123456789123451",
-        "expiry_date": "04/1997",
+        "expiry_date": "04/2025",
         "currency": "GBP",
         "amount": 100,
         "cvv": "123"
@@ -78,16 +80,18 @@ def test_bank_returns_service_unavailable():
     assert response.status_code == 503
 
 
-def test_bank_rejects_invalid_request():
+@pytest.mark.parametrize(
+    "missing_field",
+    BANK_SIMULATOR_REQUIRED_FIELDS,
+    ids=lambda field: f"missing_{field}"
+)
+def test_bank_rejects_invalid_request(missing_field, valid_payment_payload):
     """
     If the payload is missing a required field, then the simulator returns an 400 Bad Request with error message
+    We parametrize all possible parameters fields and get rid of each one to check if simulator responds correctly
     """
-    payload = {
-        "expiry_date": "04/2025",
-        "currency": "GBP",
-        "amount": 100,
-        "cvv": "123"
-    }
+    payload = valid_payment_payload.copy()
+    payload.pop(missing_field)
 
     response = requests.post(
         f"{BANK_SIMULATOR_URL_BASE}/payments",

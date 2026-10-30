@@ -1,1 +1,29 @@
-BANK_SIMULATOR_URL_BASE = "http://localhost:8080"
+import pytest
+from datetime import datetime
+
+
+@pytest.fixture
+def valid_payment_payload():
+    return {
+        "card_number": "0123456789123451",
+        "expiry_date": "04/2027",
+        "currency": "USD",
+        "amount": 100,
+        "cvv": "123"
+    }
+
+
+@pytest.fixture
+def frozen_datetime(monkeypatch):
+    """
+    Adding a fixture to freeze the datetime.now() in the PaymentValidator, the idea is to have a deterministic test
+    """
+    class FrozenDateTime(datetime):
+        @classmethod
+        def now(cls):
+            return cls(2026, 10, 30)
+
+    monkeypatch.setattr(
+        "payment_gateway_api.payment_validator.datetime",
+        FrozenDateTime
+    )
