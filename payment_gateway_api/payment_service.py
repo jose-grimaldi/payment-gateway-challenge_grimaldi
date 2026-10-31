@@ -26,6 +26,7 @@ class PaymentService:
         logger.info("Starting processing payment")
 
         if not PaymentValidator().validate_payment(payment):
+            logger.error("Payment invalid, unable to execute")
             raise InvalidPaymentParameterError()
 
         logger.info("Payment validated")
@@ -58,6 +59,7 @@ class PaymentService:
         payment = self.payment_repository.get_by_id(payment_id)
 
         if payment is None:
+            logger.error("Payment was not found in Repo")
             raise PaymentNotFoundError(payment_id)
 
         return payment

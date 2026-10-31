@@ -11,10 +11,7 @@ def test_create_authorized_payment(
         "authorization_code": "code"
     }
 
-    response = client.post(
-        "/payments",
-        json=valid_payment_payload
-    )
+    response = client.post("/payments", json=valid_payment_payload)
 
     assert response.status_code == 200
 
@@ -40,10 +37,7 @@ def test_create_declined_payment(
         "authorization_code": ""
     }
 
-    response = client.post(
-        "/payments",
-        json=declined_payment_payload
-    )
+    response = client.post("/payments", json=declined_payment_payload)
 
     assert response.status_code == 200
     assert response.json()["status"] == PaymentStatus.DECLINED.value
@@ -57,10 +51,7 @@ def test_create_payment_with_missing_field(
     payload = valid_payment_payload.copy()
     del payload["card_number"]
 
-    response = client.post(
-        "/payments",
-        json=payload
-    )
+    response = client.post("/payments", json=payload)
 
     assert response.status_code == 400
     bank_service.process_payment.assert_not_called()
@@ -71,10 +62,7 @@ def test_create_payment_with_invalid_field(
     bank_service,
     invalid_payment_payload
 ):
-    response = client.post(
-        "/payments",
-        json=invalid_payment_payload
-    )
+    response = client.post("/payments", json=invalid_payment_payload)
 
     assert response.status_code == 400
     bank_service.process_payment.assert_not_called()
@@ -85,10 +73,7 @@ def test_create_payment_when_bank_unavailable(
     bank_service,
     unavailable_payment_payload
 ):
-    response = client.post(
-        "/payments",
-        json=unavailable_payment_payload
-    )
+    response = client.post("/payments", json=unavailable_payment_payload)
 
     assert response.status_code == 503
 

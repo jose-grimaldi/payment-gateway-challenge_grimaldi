@@ -1,6 +1,7 @@
 import pytest
 
 from payment_gateway_api.exceptions import InvalidPaymentParameterError
+from payment_gateway_api.models import PaymentStatus
 
 
 def test_process_authorized_payment(
@@ -16,7 +17,7 @@ def test_process_authorized_payment(
 
     response = payment_service.process_payment(valid_payment_request)
 
-    assert response.status == "Authorized"
+    assert response.status == PaymentStatus.AUTHORIZED.value
     assert response.last_four_card_digits == "3451"
 
 
@@ -33,7 +34,7 @@ def test_process_declined_payment(
 
     response = payment_service.process_payment(declined_payment_request)
 
-    assert response.status == "Declined"
+    assert response.status == PaymentStatus.DECLINED.value
 
 
 def test_invalid_payment(

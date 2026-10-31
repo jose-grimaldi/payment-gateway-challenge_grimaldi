@@ -1,4 +1,5 @@
 from payment_gateway_api.models import PaymentResponse
+from payment_gateway_api.models import PaymentStatus
 from payment_gateway_api.payment_repository import PaymentRepository
 
 
@@ -7,7 +8,7 @@ def test_save_payment():
 
     payment = PaymentResponse(
         id="p1",
-        status="Authorized",
+        status=PaymentStatus.AUTHORIZED.value,
         last_four_card_digits="8871",
         expiry_month="04",
         expiry_year="2027",
