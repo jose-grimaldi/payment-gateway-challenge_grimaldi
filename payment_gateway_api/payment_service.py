@@ -1,3 +1,4 @@
+import logging
 from uuid import uuid4
 
 from payment_gateway_api.bank_service import BankService
@@ -6,6 +7,8 @@ from payment_gateway_api.models import PaymentResponse, PaymentRequest
 from payment_gateway_api.models import PaymentStatus
 from payment_gateway_api.payment_repository import PaymentRepository
 from payment_gateway_api.payment_validator import PaymentValidator
+
+logger = logging.getLogger(__name__)
 
 
 class PaymentService:
@@ -20,8 +23,12 @@ class PaymentService:
         BankService. Create a PaymentResponse with the status based on the response of the BankService
         """
 
+        logger.info("Starting processing payment")
+
         if not PaymentValidator().validate_payment(payment):
             raise InvalidPaymentParameterError()
+
+        logger.info("Payment validated")
 
         bank_response = self.bank_service.process_payment(payment)
 
@@ -37,7 +44,12 @@ class PaymentService:
             amount=payment.amount
         )
 
+        logger.info("Payment processed by bank: id=%s, status=%s", payment_response.id,
+                    payment_response.status)
+
         self.payment_repository.save(payment_response)
+
+        logger.info("Payment saved in repo")
 
         return payment_response
 

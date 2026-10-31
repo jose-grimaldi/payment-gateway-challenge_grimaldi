@@ -1,3 +1,4 @@
+import logging
 from dataclasses import asdict
 
 from fastapi import FastAPI, HTTPException, Request
@@ -10,6 +11,7 @@ from payment_gateway_api.models import PaymentRequest
 from payment_gateway_api.payment_repository import PaymentRepository
 from payment_gateway_api.payment_service import PaymentService
 
+logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 
 bank_service = BankService()
