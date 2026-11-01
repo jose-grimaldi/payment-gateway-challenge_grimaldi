@@ -20,10 +20,15 @@ class PaymentRequest:
         expiry_date=None,
         currency=None,
         amount=None,
-        cvv=None
+        cvv=None,
+        expiry_month=None,
+        expiry_year=None
     ):
 
-        expiry_month, expiry_year = expiry_date.split('/') if isinstance(expiry_date, str) else (None, None)
+        if isinstance(expiry_date, str):
+            parts = expiry_date.split('/')
+            if len(parts) == 2:
+                expiry_month, expiry_year = parts[0], parts[1]
 
         parameters = {
             "card_number": card_number,

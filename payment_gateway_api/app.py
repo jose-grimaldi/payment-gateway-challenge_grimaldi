@@ -3,6 +3,7 @@ from dataclasses import asdict
 
 from fastapi import FastAPI, HTTPException, Request
 
+from payment_gateway_api.api_docs import CREATE_PAYMENT_OPENAPI
 from payment_gateway_api.bank_service import BankService
 from payment_gateway_api.config import REQUIRED_FIELDS_PAYLOAD
 from payment_gateway_api.exceptions import (PaymentNotFoundError, MissingPaymentRequestParameterError,
@@ -28,7 +29,7 @@ async def ping() -> dict[str, str]:
     return {"app": "payment-gateway-api"}
 
 
-@app.post("/payments")
+@app.post("/payments", openapi_extra=CREATE_PAYMENT_OPENAPI)
 async def create_payment(request: Request):
     """
     Endpoint allowing to create a payment and to execute it
